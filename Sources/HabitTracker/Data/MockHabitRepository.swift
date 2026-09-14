@@ -9,7 +9,12 @@ enum MockHabitRepositoryError: Error {
 /// changes to the view model or views.
 struct MockHabitRepository: HabitRepository {
     func loadHabits() async throws -> [Habit] {
-        guard let url = Bundle.module.url(forResource: "habits", withExtension: "json") else {
+        #if SWIFT_PACKAGE
+        let bundle = Bundle.module
+        #else
+        let bundle = Bundle.main
+        #endif
+        guard let url = bundle.url(forResource: "habits", withExtension: "json") else {
             throw MockHabitRepositoryError.fixtureNotFound
         }
         let data = try Data(contentsOf: url)

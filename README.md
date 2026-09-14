@@ -19,14 +19,24 @@ in for a screenshot until the app was actually run.
 
 ## How to run
 
-Requires Xcode 16+ (Swift 6 toolchain) on macOS.
+**In the iOS Simulator** — needs Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+(`brew install xcodegen`). The Xcode project is generated rather than committed, so
+it never goes stale against `Package.swift`:
+
+```bash
+cd Xcode
+xcodegen generate
+open HabitTracker.xcodeproj
+```
+
+Then pick an iPhone simulator and hit Run.
+
+**Tests and a headless build** — plain SwiftPM, no Xcode project needed:
 
 ```bash
 swift build
 swift test
 ```
-
-To actually see the screen, open the package in Xcode, add a new iOS App target, set `HabitTrackerApp` (from the `HabitTracker` library) as its `@main` entry point, and run it in the simulator.
 
 ## Stack
 
@@ -41,5 +51,8 @@ To actually see the screen, open the package in Xcode, add a new iOS App target,
   originally written on a Linux CI runner where `swift build` fails on
   `import SwiftUI` (`error: no such module 'SwiftUI'`), so it shipped unverified
   and said so; that no longer applies.
+- The fixture is duplicated: `mock/habits.json` is the readable copy, and
+  `Sources/HabitTracker/Resources/habits.json` is the one actually bundled. Edit
+  both or they drift.
 - No persistence: toggling a habit only updates in-memory state: relaunching the app (in a real iOS environment) resets to the fixture data in `mock/habits.json`.
 - No way to add, edit, or delete habits — the list is fixed to what's in the fixture.
